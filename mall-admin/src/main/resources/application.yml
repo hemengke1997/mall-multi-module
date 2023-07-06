@@ -1,0 +1,53 @@
+spring:
+  application:
+    name: mall-admin
+  profiles:
+    active: dev #默认为开发环境
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher #https://www.zhangbj.com/p/1261.html
+  main:
+    allow-circular-references: true
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl # 查看日志
+    map-underscore-to-camel-case: true
+  global-config:
+    db-config:
+      logic-delete-value: 1 #逻辑删除值
+
+jwt: #jwt相关配置
+  tokenHeader: Authorization #JWT 请求头(request header中的名称)
+  secret: mall-admin-secret #JWT加密解密使用的密钥
+  expiration: 86400 #JWT的超期限时间 1天(60*60*24)
+  tokenHead: 'Bearer ' #JWT负载中拿到开头
+
+redis:
+  database: mall
+  key:
+    admin: 'ums:admin'
+    resourceList: 'ums:resourceList'
+  expire:
+    common: 86400 # 24小时
+
+security: #security忽略的url
+  ignore:
+    urls:
+      - /swagger-ui/
+      - /swagger-resources/**
+      - /**/v2/api-docs
+      - /**/*.html
+      - /**/*.js
+      - /**/*.css
+      - /**/*.png
+      - /**/*.map
+      - /favicon.ico
+      - /admin/login
+      - /admin/register
+      - /admin/info
+      - /admin/logout
+      - /admin/redis/**
