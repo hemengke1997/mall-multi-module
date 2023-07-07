@@ -81,7 +81,7 @@ public class UmsResourceController {
                        @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum) {
         Page<UmsResource> page = new Page<>(pageNum, pageSize);
 
-        Page<UmsResource> list = umsResourceService.page(page, categoryId, nameKeyword, urlKeyword);
+        Page<UmsResource> list = umsResourceService.selectPage(page, categoryId, nameKeyword, urlKeyword);
         return Result.success(CPage.restPage(list));
     }
 }

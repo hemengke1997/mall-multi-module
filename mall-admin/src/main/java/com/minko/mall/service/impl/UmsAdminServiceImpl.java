@@ -256,7 +256,7 @@ public class UmsAdminServiceImpl extends ServiceImpl<UmsAdminMapper, UmsAdmin> i
     }
 
     @Override
-    public Page<UmsAdmin> page(Page<UmsAdmin> page, String keyword) {
+    public Page<UmsAdmin> selectPage(Page<UmsAdmin> page, String keyword) {
         LambdaQueryWrapper<UmsAdmin> queryWrapper = new LambdaQueryWrapper<>();
         if (!StrUtil.isEmpty(keyword)) {
             queryWrapper

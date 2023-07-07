@@ -46,7 +46,7 @@ public interface UmsAdminService extends IService<UmsAdmin> {
 
     List<UmsRole> getRoleList(Long adminId);
 
-    Page<UmsAdmin> page(Page<UmsAdmin> page, String keyword);
+    Page<UmsAdmin> selectPage(Page<UmsAdmin> page, String keyword);
 
     void clearCache();
 

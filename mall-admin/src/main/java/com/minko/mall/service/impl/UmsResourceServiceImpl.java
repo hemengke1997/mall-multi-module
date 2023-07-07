@@ -20,7 +20,7 @@ public class UmsResourceServiceImpl extends ServiceImpl<UmsResourceMapper, UmsRe
     UmsAdminCacheService umsAdminCacheService;
 
     @Override
-    public Page<UmsResource> page(Page<UmsResource> page, Long categoryId, String nameKeyword, String urlKeyword) {
+    public Page<UmsResource> selectPage(Page<UmsResource> page, Long categoryId, String nameKeyword, String urlKeyword) {
         LambdaQueryWrapper<UmsResource> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         if (categoryId != null) {
             lambdaQueryWrapper.eq(UmsResource::getCategoryId, categoryId);

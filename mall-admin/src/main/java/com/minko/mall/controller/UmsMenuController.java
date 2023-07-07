@@ -36,7 +36,7 @@ public class UmsMenuController {
                        @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,
                        @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum) {
         Page<UmsMenu> page = new Page<>(pageNum, pageSize);
-        Page<UmsMenu> umsMenuList = umsMenuService.page(page, parentId);
+        Page<UmsMenu> umsMenuList = umsMenuService.selectPage(page, parentId);
         return Result.success(CPage.restPage(umsMenuList));
     }
 

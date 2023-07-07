@@ -8,7 +8,6 @@ import com.minko.mall.mapper.UmsMenuMapper;
 import com.minko.mall.model.UmsMenu;
 import com.minko.mall.service.UmsMenuService;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,11 +15,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class UmsMenuServiceImpl extends ServiceImpl<UmsMenuMapper, UmsMenu> implements UmsMenuService {
-    @Autowired
-    private UmsMenuMapper umsMenuMapper;
-
     @Override
-    public Page<UmsMenu> page(Page<UmsMenu> page, Long parentId) {
+    public Page<UmsMenu> selectPage(Page<UmsMenu> page, Long parentId) {
         LambdaQueryWrapper<UmsMenu> lambdaQueryWrapper = new LambdaQueryWrapper<>();
 
         lambdaQueryWrapper.eq(UmsMenu::getParentId, parentId);

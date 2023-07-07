@@ -209,7 +209,7 @@ public class UmsAdminController {
                        @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,
                        @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum) {
         Page<UmsAdmin> page = new Page<>(pageNum, pageSize);
-        Page<UmsAdmin> umsAdminList = umsAdminService.page(page, keyword);
+        Page<UmsAdmin> umsAdminList = umsAdminService.selectPage(page, keyword);
 
         return Result.success(CPage.restPage(umsAdminList));
     }
