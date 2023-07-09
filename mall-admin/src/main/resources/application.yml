@@ -46,8 +46,10 @@ security: #security忽略的url
       - /**/*.png
       - /**/*.map
       - /favicon.ico
+      - /actuator/**
+      - /druid/**
       - /admin/login
       - /admin/register
       - /admin/info
       - /admin/logout
-      - /admin/redis/**
+      - /minio/upload

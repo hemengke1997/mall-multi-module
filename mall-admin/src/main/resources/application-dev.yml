@@ -1,5 +1,5 @@
 server:
-  port: 8800
+  port: 8080
 
 spring:
   datasource:
@@ -16,6 +16,12 @@ spring:
     port: 6379 #Redis服务器连接端口
     password: #Redis服务器连接密码（默认为空）
     timeout: 300ms #连接超时时间（毫秒）
+
+minio:
+  endpoint: http://127.0.0.1:9000 #MinIO服务所在地址
+  bucketName: mall #存储桶名称
+  accessKey: minioadmin #访问的key
+  secretKey: minioadmin #访问的秘钥
 
 logging:
   level:

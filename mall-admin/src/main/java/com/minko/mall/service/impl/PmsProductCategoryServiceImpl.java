@@ -4,19 +4,32 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.minko.mall.dto.PmsProductCategoryParam;
+import com.minko.mall.dto.PmsProductCategoryWithChildrenItem;
+import com.minko.mall.mapper.PmsProductCategoryAttributeRelationMapper;
 import com.minko.mall.mapper.PmsProductCategoryMapper;
+import com.minko.mall.mapper.PmsProductMapper;
+import com.minko.mall.model.PmsProduct;
 import com.minko.mall.model.PmsProductCategory;
+import com.minko.mall.model.PmsProductCategoryAttributeRelation;
 import com.minko.mall.service.PmsProductCategoryService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class PmsProductCategoryServiceImpl extends ServiceImpl<PmsProductCategoryMapper, PmsProductCategory> implements PmsProductCategoryService {
     @Autowired
+    private PmsProductMapper pmsProductMapper;
+
+    @Autowired
     private PmsProductCategoryMapper pmsProductCategoryMapper;
+
+    @Autowired
+    private PmsProductCategoryAttributeRelationMapper pmsProductCategoryAttributeRelationMapper;
 
     @Override
     public int create(PmsProductCategoryParam pmsProductCategoryParam) {
@@ -61,6 +74,37 @@ public class PmsProductCategoryServiceImpl extends ServiceImpl<PmsProductCategor
         return i;
     }
 
+    @Override
+    public int updateItem(Long id, PmsProductCategoryParam pmsProductCategoryParam) {
+        PmsProductCategory productCategory = new PmsProductCategory();
+        productCategory.setId(id);
+        BeanUtils.copyProperties(pmsProductCategoryParam, productCategory);
+        setCategoryLevel(productCategory);
+        // 更新商品分类时要更新商品中的名称
+        PmsProduct product = new PmsProduct();
+        product.setProductCategoryName(productCategory.getName());
+        LambdaQueryWrapper<PmsProduct> pmsProductLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        pmsProductLambdaQueryWrapper.eq(PmsProduct::getProductCategoryId, id);
+        pmsProductMapper.updateById(product);
+
+        // 同时更新筛选属性的信息
+        LambdaQueryWrapper<PmsProductCategoryAttributeRelation> pmsProductCategoryAttributeRelationLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        pmsProductCategoryAttributeRelationLambdaQueryWrapper.eq(PmsProductCategoryAttributeRelation::getProductCategoryId, id);
+        pmsProductCategoryAttributeRelationMapper.delete(pmsProductCategoryAttributeRelationLambdaQueryWrapper);
+
+        if (!CollectionUtils.isEmpty(pmsProductCategoryParam.getProductAttributeIdList())) {
+            insertRelationList(id, pmsProductCategoryParam.getProductAttributeIdList());
+        }
+
+        int i = pmsProductCategoryMapper.updateById(productCategory);
+        return i;
+    }
+
+    @Override
+    public List<PmsProductCategoryWithChildrenItem> listWithChildren() {
+        return pmsProductCategoryMapper.listWithChildren();
+    }
+
     /**
      * 根据分类的parentId设置分类的level
      */
@@ -76,6 +120,25 @@ public class PmsProductCategoryServiceImpl extends ServiceImpl<PmsProductCategor
             } else {
                 pmsProductCategory.setLevel(0);
             }
+        }
+    }
+
+    /**
+     * 批量插入商品分类与筛选属性关系表
+     *
+     * @param productCategoryId      商品分类id
+     * @param productAttributeIdList 相关商品筛选属性id集合
+     */
+    private void insertRelationList(Long productCategoryId, List<Long> productAttributeIdList) {
+        List<PmsProductCategoryAttributeRelation> relationList = new ArrayList<>();
+        for (Long productAttrId : productAttributeIdList) {
+            PmsProductCategoryAttributeRelation relation = new PmsProductCategoryAttributeRelation();
+            relation.setProductAttributeId(productAttrId);
+            relation.setProductCategoryId(productCategoryId);
+            relationList.add(relation);
+        }
+        for (PmsProductCategoryAttributeRelation relation : relationList) {
+            pmsProductCategoryAttributeRelationMapper.insert(relation);
         }
     }
 }

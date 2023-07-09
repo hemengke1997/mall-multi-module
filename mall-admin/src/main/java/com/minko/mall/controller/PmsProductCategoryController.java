@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.minko.mall.api.CPage;
 import com.minko.mall.common.api.Result;
 import com.minko.mall.dto.PmsProductCategoryParam;
+import com.minko.mall.dto.PmsProductCategoryWithChildrenItem;
 import com.minko.mall.model.PmsProductCategory;
 import com.minko.mall.service.PmsProductCategoryService;
 import io.swagger.annotations.Api;
@@ -66,5 +67,33 @@ public class PmsProductCategoryController {
     public Result getItem(@PathVariable Long id) {
         PmsProductCategory pmsProductCategory = pmsProductCategoryService.getById(id);
         return Result.success(pmsProductCategory);
+    }
+
+    @ApiOperation("修改商品分类")
+    @PostMapping("/update/{id}")
+    public Result update(@PathVariable Long id, @RequestBody PmsProductCategoryParam pmsProductCategoryParam) {
+
+        int i = pmsProductCategoryService.updateItem(id, pmsProductCategoryParam);
+        if (i > 0) {
+            return Result.success(1);
+        }
+        return Result.failed();
+    }
+
+    @ApiOperation("删除商品分类")
+    @PostMapping("/delete/{id}")
+    public Result delete(@PathVariable Long id) {
+        boolean removed = pmsProductCategoryService.removeById(id);
+        if (removed) {
+            return Result.success(null);
+        }
+        return Result.failed();
+    }
+
+    @ApiOperation("查询所有一级分类及子分类")
+    @GetMapping("/list/withChildren")
+    public Result<List<PmsProductCategoryWithChildrenItem>> listWithChildren() {
+        List<PmsProductCategoryWithChildrenItem> list = pmsProductCategoryService.listWithChildren();
+        return Result.success(list);
     }
 }
