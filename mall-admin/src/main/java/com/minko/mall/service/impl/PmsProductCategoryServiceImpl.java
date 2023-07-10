@@ -35,12 +35,14 @@ public class PmsProductCategoryServiceImpl extends ServiceImpl<PmsProductCategor
     public int create(PmsProductCategoryParam pmsProductCategoryParam) {
         PmsProductCategory pmsProductCategory = new PmsProductCategory();
         pmsProductCategory.setProductCount(0);
-
         BeanUtils.copyProperties(pmsProductCategoryParam, pmsProductCategory);
         setCategoryLevel(pmsProductCategory);
         int inserted = pmsProductCategoryMapper.insert(pmsProductCategory);
-        // todo 创建筛选属性关联
-
+        // 创建筛选属性关联
+        List<Long> productAttributeIdList = pmsProductCategoryParam.getProductAttributeIdList();
+        if (!CollectionUtils.isEmpty(productAttributeIdList)) {
+            insertRelationList(pmsProductCategory.getId(), productAttributeIdList);
+        }
         return inserted;
     }
 

@@ -36,6 +36,10 @@ public class PmsProductImpl extends ServiceImpl<PmsProductMapper, PmsProduct> im
     private CmsSubjectProductRelationMapper cmsSubjectProductRelationMapper;
     @Autowired
     private CmsPrefrenceAreaProductRelationMapper cmsPrefrenceAreaProductRelationMapper;
+    @Autowired
+    private PmsProductFullReductionMapper pmsProductFullReductionMapper;
+    @Autowired
+    private PmsProductAttributeValueMapper pmsProductAttributeValueMapper;
 
     @Override
     public int create(PmsProductParam productParam) {
@@ -51,14 +55,14 @@ public class PmsProductImpl extends ServiceImpl<PmsProductMapper, PmsProduct> im
         relateAndInsertList(pmsMemberPriceMapper, productParam.getMemberPriceList(), productId);
         // 阶梯价格
         relateAndInsertList(pmsProductLadderMapper, productParam.getProductLadderList(), productId);
-        // todo 满减价格
-        // relateAndInsertList(productFullReductionDao, productParam.getProductFullReductionList(), productId);
+        // 满减价格
+        relateAndInsertList(pmsProductFullReductionMapper, productParam.getProductFullReductionList(), productId);
         // 处理sku的编码
         handleSkuStockCode(productParam.getSkuStockList(), productId);
         // 添加sku库存信息
         relateAndInsertList(pmsSkuStockMapper, productParam.getSkuStockList(), productId);
-        // todo 添加商品参数,添加自定义商品规格
-        // relateAndInsertList(productAttributeValueDao, productParam.getProductAttributeValueList(), productId);
+        // 添加商品参数,添加自定义商品规格
+        relateAndInsertList(pmsProductAttributeValueMapper, productParam.getProductAttributeValueList(), productId);
         // 关联专题
         relateAndInsertList(cmsSubjectProductRelationMapper, productParam.getSubjectProductRelationList(), productId);
         // 关联优选
