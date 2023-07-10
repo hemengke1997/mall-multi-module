@@ -8,6 +8,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * 商品信息主要包括四部分：
@@ -59,17 +60,17 @@ public class PmsProduct implements Serializable {
     @ApiModelProperty(value = "价格")
     private BigDecimal price;
 
-    // @ApiModelProperty(value = "促销价格")
-    // private BigDecimal promotionPrice;
+    @ApiModelProperty(value = "促销价格")
+    private BigDecimal promotionPrice;
 
-    // @ApiModelProperty(value = "赠送的成长值")
-    // private Integer giftGrowth;
+    @ApiModelProperty(value = "赠送的成长值")
+    private Integer giftGrowth;
 
-    // @ApiModelProperty(value = "赠送的积分")
-    // private Integer giftPoint;
+    @ApiModelProperty(value = "赠送的积分")
+    private Integer giftPoint;
 
-    // @ApiModelProperty(value = "限制使用的积分数")
-    // private Integer usePointLimit;
+    @ApiModelProperty(value = "限制使用的积分数")
+    private Integer usePointLimit;
 
     @ApiModelProperty(value = "副标题")
     private String subTitle;
@@ -104,17 +105,17 @@ public class PmsProduct implements Serializable {
 
     private String detailTitle;
 
-    // @ApiModelProperty(value = "促销开始时间")
-    // private Date promotionStartTime;
+    @ApiModelProperty(value = "促销开始时间")
+    private Date promotionStartTime;
 
-    // @ApiModelProperty(value = "促销结束时间")
-    // private Date promotionEndTime;
+    @ApiModelProperty(value = "促销结束时间")
+    private Date promotionEndTime;
 
-    // @ApiModelProperty(value = "活动限购数量")
-    // private Integer promotionPerLimit;
+    @ApiModelProperty(value = "活动限购数量")
+    private Integer promotionPerLimit;
 
-    // @ApiModelProperty(value = "促销类型：0->没有促销使用原价;1->使用促销价；2->使用会员价；3->使用阶梯价格；4->使用满减价格；5->限时购")
-    // private Integer promotionType;
+    @ApiModelProperty(value = "促销类型：0->没有促销使用原价;1->使用促销价；2->使用会员价；3->使用阶梯价格；4->使用满减价格；5->限时购")
+    private Integer promotionType;
 
     @ApiModelProperty(value = "品牌名称")
     private String brandName;
@@ -130,8 +131,8 @@ public class PmsProduct implements Serializable {
     @ApiModelProperty(value = "产品详情网页内容")
     private String detailHtml;
 
-    // @ApiModelProperty(value = "移动端网页详情")
-    // private String detailMobileHtml;
+    @ApiModelProperty(value = "移动端网页详情")
+    private String detailMobileHtml;
 
     private static final long serialVersionUID = 1L;
 }
