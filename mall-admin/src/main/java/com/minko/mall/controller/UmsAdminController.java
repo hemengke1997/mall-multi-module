@@ -35,8 +35,6 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/admin")
 public class UmsAdminController {
-    @Value("${jwt.tokenHeader}")
-    private String tokenHeader;
     @Value("${jwt.tokenHead}")
     private String tokenHead;
 

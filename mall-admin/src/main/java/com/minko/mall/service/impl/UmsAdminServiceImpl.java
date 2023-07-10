@@ -15,7 +15,6 @@ import com.minko.mall.dto.UpdateAdminPasswordParam;
 import com.minko.mall.mapper.UmsAdminLoginLogMapper;
 import com.minko.mall.mapper.UmsAdminMapper;
 import com.minko.mall.mapper.UmsAdminRoleRelationMapper;
-import com.minko.mall.mapper.UmsRoleMapper;
 import com.minko.mall.model.*;
 import com.minko.mall.security.util.JwtTokenUtil;
 import com.minko.mall.service.UmsAdminCacheService;
@@ -54,9 +53,6 @@ public class UmsAdminServiceImpl extends ServiceImpl<UmsAdminMapper, UmsAdmin> i
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private UmsRoleMapper umsRoleMapper;
 
     @Autowired
     private UmsAdminRoleRelationMapper umsAdminRoleRelationMapper;
