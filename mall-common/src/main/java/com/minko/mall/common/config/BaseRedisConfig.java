@@ -7,12 +7,14 @@ import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator
 import com.minko.mall.common.service.RedisService;
 import com.minko.mall.common.service.impl.RedisServiceImpl;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+@Configuration
 public class BaseRedisConfig {
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
@@ -29,6 +31,7 @@ public class BaseRedisConfig {
         template.afterPropertiesSet();
         return template;
     }
+
 
     public RedisSerializer<Object> redisSerializer() {
         // 创建JSON序列化器

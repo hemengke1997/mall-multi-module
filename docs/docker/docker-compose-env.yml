@@ -1,0 +1,101 @@
+version: '3'
+
+services:
+  mysql:
+    image: mysql
+    container_name: mysql-mall
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456 #root密码
+    ports:
+      - "3306:3306"
+    volumes:
+      - ~/Documents/docker_volume/mall/mysql:/var/lib/mysql #数据文件目录挂载
+      - ~/Documents/docker_volume/mall/mysql/conf:/etc/mysql #配置文件目录挂载
+      - ~/Documents/docker_volume/mall/mysql/log:/var/log/mysql #日志文件目录挂载
+
+  redis:
+    image: redis
+    container_name: redis-mall
+    command: redis-server --appendonly yes
+    volumes:
+      - ~/Documents/docker_volume/mall/redis:/data #数据文件目录挂载
+    ports:
+      - "6379:6379"
+
+  minio:
+    image: minio/minio
+    container_name: minio-mall
+    command: server /data --console-address ":9001" #指定数据目录及console运行端口启动
+    volumes:
+      - ~/Documents/docker_volume/mall/minio:/data #数据文件目录挂载
+    environment:
+      - "MINIO_ROOT_USER=minioadmin" #设置minio的root帐号
+      - "MINIO_ROOT_PASSWORD=minioadmin" #设置minio的root密码
+    ports:
+      - "9000:9000" #minio服务端口
+      - "9001:9001" #minio控制台端口
+
+  elasticsearch:
+    image: elasticsearch:7.17.7
+    container_name: elasticsearch-mall
+    environment:
+      - "cluster.name=elasticsearch" #设置集群名称为elasticsearch
+      - "discovery.type=single-node" #以单一节点模式启动
+      - "ES_JAVA_OPTS=-Xms64m -Xmx128m" #设置使用jvm内存大小
+    volumes:
+      - ~/Documents/docker_volume/mall/elasticsearch/plugins:/usr/share/elasticsearch/plugins #插件文件目录挂载
+      - ~/Documents/docker_volume/mall/elasticsearch/data:/usr/share/elasticsearch/data #数据文件目录挂载
+    ports:
+      - "9200:9200" #elasticsearch服务端口
+      - "9300:9300" #elasticsearch服务端口
+
+  kibana:
+    image: kibana:7.17.7
+    container_name: kibana-mall
+    links:
+      - elasticsearch:es #可以用es这个域名访问elasticsearch服务
+    depends_on:
+      - elasticsearch #kibana在elasticsearch启动之后再启动
+    environment:
+      - "elasticsearch.hosts=http://es:9200" #设置访问elasticsearch的地址
+    ports:
+      - "5601:5601"
+
+  mongo:
+    image: mongo
+    container_name: mongo-mall
+    volumes:
+      - ~/Documents/docker_volume/mall/mongo/db:/data/db #数据文件目录挂载
+    ports:
+      - "27017:27017" #mongo服务端口
+
+  rabbitmq:
+    image: rabbitmq:3.9-management
+    container_name: rabbitmq-mall
+    environment:
+      - "RABBITMQ_DEFAULT_USER=admin" #设置rabbitmq的默认帐号
+      - "RABBITMQ_DEFAULT_PASS=admin" #设置rabbitmq的默认密码
+      - "RABBITMQ_DEFAULT_VHOST=/mall" #设置rabbitmq的默认虚拟主机
+    ports:
+      - "5672:5672" #rabbitmq服务端口
+      - "15672:15672" #rabbitmq控制台端口
+    volumes:
+      - ~/Documents/docker_volume/mall/rabbitmq/data:/var/lib/rabbitmq #数据文件目录挂载
+      - ~/Documents/docker_volume/mall/rabbitmq/logs:/var/log/rabbitmq #日志文件目录挂载
+      - ~/Documents/docker_volume/mall/rabbitmq/config:/etc/rabbitmq #配置文件目录挂载
+    command: rabbitmq-server start
+    restart: always
+    hostname: rabbitmqhost
+
+  nginx:
+    image: nginx
+    container_name: nginx-mall
+    volumes:
+      - ~/Documents/docker_volume/mall/nginx/nginx.conf:/etc/nginx/nginx.conf #配置文件目录挂载
+      - ~/Documents/docker_volume/mall/nginx/html:/usr/share/nginx/html #静态资源根目录挂载
+      - ~/Documents/docker_volume/mall/nginx/logs:/var/log/nginx #日志文件目录挂载
+      - ~/Documents/docker_volume/mall/nginx/conf.d:/etc/nginx/conf.d #nginx配置文件挂载
+    ports:
+      - "80:80"
