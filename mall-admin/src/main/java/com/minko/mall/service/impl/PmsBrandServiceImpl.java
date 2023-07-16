@@ -4,9 +4,9 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.minko.mall.dao.PmsProductDao;
 import com.minko.mall.dto.PmsBrandParam;
 import com.minko.mall.mapper.PmsBrandMapper;
-import com.minko.mall.mapper.PmsProductMapper;
 import com.minko.mall.model.PmsBrand;
 import com.minko.mall.model.PmsProduct;
 import com.minko.mall.service.PmsBrandSerive;
@@ -20,7 +20,7 @@ public class PmsBrandServiceImpl extends ServiceImpl<PmsBrandMapper, PmsBrand> i
     private PmsBrandMapper pmsBrandMapper;
 
     @Autowired
-    private PmsProductMapper pmsProductMapper;
+    private PmsProductDao pmsProductDao;
 
     @Override
     public int create(PmsBrandParam pmsBrandParam) {
@@ -47,7 +47,7 @@ public class PmsBrandServiceImpl extends ServiceImpl<PmsBrandMapper, PmsBrand> i
         product.setBrandName(pmsBrand.getName());
         LambdaQueryWrapper<PmsProduct> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(PmsProduct::getBrandId, id);
-        pmsProductMapper.update(product, lambdaQueryWrapper);
+        pmsProductDao.update(product, lambdaQueryWrapper);
         return pmsBrandMapper.updateById(pmsBrand);
     }
 

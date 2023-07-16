@@ -10,11 +10,11 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.minko.mall.bo.UmsAdminUserDetails;
 import com.minko.mall.common.exception.Asserts;
 import com.minko.mall.common.util.RequestUtil;
+import com.minko.mall.dao.UmsAdminRoleRelationDao;
 import com.minko.mall.dto.UmsAdminParam;
 import com.minko.mall.dto.UpdateAdminPasswordParam;
 import com.minko.mall.mapper.UmsAdminLoginLogMapper;
 import com.minko.mall.mapper.UmsAdminMapper;
-import com.minko.mall.mapper.UmsAdminRoleRelationMapper;
 import com.minko.mall.model.*;
 import com.minko.mall.security.util.JwtTokenUtil;
 import com.minko.mall.service.UmsAdminCacheService;
@@ -55,7 +55,7 @@ public class UmsAdminServiceImpl extends ServiceImpl<UmsAdminMapper, UmsAdmin> i
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private UmsAdminRoleRelationMapper umsAdminRoleRelationMapper;
+    private UmsAdminRoleRelationDao umsAdminRoleRelationDao;
 
     @Autowired
     private UmsAdminRoleRelationService umsAdminRoleRelationService;
@@ -230,7 +230,7 @@ public class UmsAdminServiceImpl extends ServiceImpl<UmsAdminMapper, UmsAdmin> i
         // 先删除原来的关系
         LambdaQueryWrapper<UmsAdminRoleRelation> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(UmsAdminRoleRelation::getAdminId, adminId);
-        umsAdminRoleRelationMapper.delete(queryWrapper);
+        umsAdminRoleRelationDao.delete(queryWrapper);
 
         if (!CollectionUtil.isEmpty(roleIds)) {
             List<UmsAdminRoleRelation> list = new ArrayList<>();
@@ -247,7 +247,7 @@ public class UmsAdminServiceImpl extends ServiceImpl<UmsAdminMapper, UmsAdmin> i
 
     @Override
     public List<UmsRole> getRoleList(Long adminId) {
-        List<UmsRole> roleList = umsAdminRoleRelationMapper.getRoleList(adminId);
+        List<UmsRole> roleList = umsAdminRoleRelationDao.getRoleList(adminId);
         return roleList;
     }
 
@@ -276,7 +276,7 @@ public class UmsAdminServiceImpl extends ServiceImpl<UmsAdminMapper, UmsAdmin> i
         if (CollUtil.isNotEmpty(resourceList)) {
             return resourceList;
         }
-        resourceList = umsAdminRoleRelationMapper.getResourceList(adminId);
+        resourceList = umsAdminRoleRelationDao.getResourceList(adminId);
         if (CollUtil.isNotEmpty(resourceList)) {
             // 存入redis
             getCacheService().setResouceList(adminId, resourceList);

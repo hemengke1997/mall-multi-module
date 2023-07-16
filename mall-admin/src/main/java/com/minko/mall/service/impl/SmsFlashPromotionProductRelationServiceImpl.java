@@ -3,9 +3,9 @@ package com.minko.mall.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.minko.mall.dto.SmsFlashPromotionProduct;
-import com.minko.mall.mapper.SmsFlashPromotionProductRelationMapper;
 import com.minko.mall.model.SmsFlashPromotionProductRelation;
+import com.minko.mall.dao.SmsFlashPromotionProductRelationDao;
+import com.minko.mall.dto.SmsFlashPromotionProduct;
 import com.minko.mall.service.SmsFlashPromotionProductRelationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,9 +13,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class SmsFlashPromotionProductRelationServiceImpl extends ServiceImpl<SmsFlashPromotionProductRelationMapper, SmsFlashPromotionProductRelation> implements SmsFlashPromotionProductRelationService {
+public class SmsFlashPromotionProductRelationServiceImpl extends ServiceImpl<SmsFlashPromotionProductRelationDao, SmsFlashPromotionProductRelation> implements SmsFlashPromotionProductRelationService {
     @Autowired
-    private SmsFlashPromotionProductRelationMapper flashPromotionProductRelationMapper;
+    private SmsFlashPromotionProductRelationDao flashPromotionProductRelationMapper;
 
     @Override
     public long getCount(Long flashPromotionId, Long flashPromotionSessionId) {

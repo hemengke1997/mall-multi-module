@@ -3,11 +3,11 @@ package com.minko.mall.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.minko.mall.dao.PmsProductCategoryDao;
+import com.minko.mall.dao.PmsProductDao;
 import com.minko.mall.dto.PmsProductCategoryParam;
 import com.minko.mall.dto.PmsProductCategoryWithChildrenItem;
 import com.minko.mall.mapper.PmsProductCategoryAttributeRelationMapper;
-import com.minko.mall.mapper.PmsProductCategoryMapper;
-import com.minko.mall.mapper.PmsProductMapper;
 import com.minko.mall.model.PmsProduct;
 import com.minko.mall.model.PmsProductCategory;
 import com.minko.mall.model.PmsProductCategoryAttributeRelation;
@@ -21,12 +21,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class PmsProductCategoryServiceImpl extends ServiceImpl<PmsProductCategoryMapper, PmsProductCategory> implements PmsProductCategoryService {
+public class PmsProductCategoryServiceImpl extends ServiceImpl<PmsProductCategoryDao, PmsProductCategory> implements PmsProductCategoryService {
     @Autowired
-    private PmsProductMapper pmsProductMapper;
+    private PmsProductDao pmsProductDao;
 
     @Autowired
-    private PmsProductCategoryMapper pmsProductCategoryMapper;
+    private PmsProductCategoryDao pmsProductCategoryDao;
 
     @Autowired
     private PmsProductCategoryAttributeRelationMapper pmsProductCategoryAttributeRelationMapper;
@@ -37,7 +37,7 @@ public class PmsProductCategoryServiceImpl extends ServiceImpl<PmsProductCategor
         pmsProductCategory.setProductCount(0);
         BeanUtils.copyProperties(pmsProductCategoryParam, pmsProductCategory);
         setCategoryLevel(pmsProductCategory);
-        int inserted = pmsProductCategoryMapper.insert(pmsProductCategory);
+        int inserted = pmsProductCategoryDao.insert(pmsProductCategory);
         // 创建筛选属性关联
         List<Long> productAttributeIdList = pmsProductCategoryParam.getProductAttributeIdList();
         if (!CollectionUtils.isEmpty(productAttributeIdList)) {
@@ -52,7 +52,7 @@ public class PmsProductCategoryServiceImpl extends ServiceImpl<PmsProductCategor
         lambdaQueryWrapper
                 .eq(PmsProductCategory::getParentId, parentId)
                 .orderByDesc(PmsProductCategory::getSort);
-        Page<PmsProductCategory> productCategoryPage = pmsProductCategoryMapper.selectPage(page, lambdaQueryWrapper);
+        Page<PmsProductCategory> productCategoryPage = pmsProductCategoryDao.selectPage(page, lambdaQueryWrapper);
         return productCategoryPage;
     }
 
@@ -62,7 +62,7 @@ public class PmsProductCategoryServiceImpl extends ServiceImpl<PmsProductCategor
         lambdaQueryWrapper.in(PmsProductCategory::getId, ids);
         PmsProductCategory pmsProductCategory = new PmsProductCategory();
         pmsProductCategory.setNavStatus(navStatus);
-        int i = pmsProductCategoryMapper.update(pmsProductCategory, lambdaQueryWrapper);
+        int i = pmsProductCategoryDao.update(pmsProductCategory, lambdaQueryWrapper);
         return i;
     }
 
@@ -72,7 +72,7 @@ public class PmsProductCategoryServiceImpl extends ServiceImpl<PmsProductCategor
         lambdaQueryWrapper.in(PmsProductCategory::getId, ids);
         PmsProductCategory pmsProductCategory = new PmsProductCategory();
         pmsProductCategory.setShowStatus(showStatus);
-        int i = pmsProductCategoryMapper.update(pmsProductCategory, lambdaQueryWrapper);
+        int i = pmsProductCategoryDao.update(pmsProductCategory, lambdaQueryWrapper);
         return i;
     }
 
@@ -87,7 +87,7 @@ public class PmsProductCategoryServiceImpl extends ServiceImpl<PmsProductCategor
         product.setProductCategoryName(productCategory.getName());
         LambdaQueryWrapper<PmsProduct> pmsProductLambdaQueryWrapper = new LambdaQueryWrapper<>();
         pmsProductLambdaQueryWrapper.eq(PmsProduct::getProductCategoryId, id);
-        pmsProductMapper.updateById(product);
+        pmsProductDao.updateById(product);
 
         // 同时更新筛选属性的信息
         LambdaQueryWrapper<PmsProductCategoryAttributeRelation> pmsProductCategoryAttributeRelationLambdaQueryWrapper = new LambdaQueryWrapper<>();
@@ -98,13 +98,13 @@ public class PmsProductCategoryServiceImpl extends ServiceImpl<PmsProductCategor
             insertRelationList(id, pmsProductCategoryParam.getProductAttributeIdList());
         }
 
-        int i = pmsProductCategoryMapper.updateById(productCategory);
+        int i = pmsProductCategoryDao.updateById(productCategory);
         return i;
     }
 
     @Override
     public List<PmsProductCategoryWithChildrenItem> listWithChildren() {
-        return pmsProductCategoryMapper.listWithChildren();
+        return pmsProductCategoryDao.listWithChildren();
     }
 
     /**
@@ -116,7 +116,7 @@ public class PmsProductCategoryServiceImpl extends ServiceImpl<PmsProductCategor
             pmsProductCategory.setLevel(0);
         } else {
             // 有父分类时选择根据父分类level设置
-            PmsProductCategory parentCategory = pmsProductCategoryMapper.selectById(pmsProductCategory.getParentId());
+            PmsProductCategory parentCategory = pmsProductCategoryDao.selectById(pmsProductCategory.getParentId());
             if (parentCategory != null) {
                 pmsProductCategory.setLevel(parentCategory.getLevel() + 1);
             } else {

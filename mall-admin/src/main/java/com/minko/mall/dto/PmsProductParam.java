@@ -1,5 +1,6 @@
 package com.minko.mall.dto;
 
+import com.minko.mall.common.model.*;
 import com.minko.mall.model.*;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

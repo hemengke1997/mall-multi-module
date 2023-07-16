@@ -4,6 +4,8 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.minko.mall.dao.PmsProductDao;
+import com.minko.mall.dao.PmsSkuStockDao;
 import com.minko.mall.dto.PmsProductParam;
 import com.minko.mall.dto.PmsProductQueryParam;
 import com.minko.mall.dto.PmsProductResult;
@@ -23,15 +25,15 @@ import java.util.List;
 
 @Service
 @Slf4j
-public class PmsProductImpl extends ServiceImpl<PmsProductMapper, PmsProduct> implements PmsProductService {
+public class PmsProductImpl extends ServiceImpl<PmsProductDao, PmsProduct> implements PmsProductService {
     @Autowired
-    private PmsProductMapper pmsProductMapper;
+    private PmsProductDao pmsProductDao;
     @Autowired
     private PmsMemberPriceMapper pmsMemberPriceMapper;
     @Autowired
     private PmsProductLadderMapper pmsProductLadderMapper;
     @Autowired
-    private PmsSkuStockMapper pmsSkuStockMapper;
+    private PmsSkuStockDao pmsSkuStockDao;
     @Autowired
     private CmsSubjectProductRelationMapper cmsSubjectProductRelationMapper;
     @Autowired
@@ -47,7 +49,7 @@ public class PmsProductImpl extends ServiceImpl<PmsProductMapper, PmsProduct> im
         // 创建商品
         PmsProduct product = productParam;
         product.setId(null);
-        pmsProductMapper.insert(product);
+        pmsProductDao.insert(product);
         // 根据促销类型设置价格：会员价格、阶梯价格、满减价格
         Long productId = product.getId();
 
@@ -60,7 +62,7 @@ public class PmsProductImpl extends ServiceImpl<PmsProductMapper, PmsProduct> im
         // 处理sku的编码
         handleSkuStockCode(productParam.getSkuStockList(), productId);
         // 添加sku库存信息
-        relateAndInsertList(pmsSkuStockMapper, productParam.getSkuStockList(), productId);
+        relateAndInsertList(pmsSkuStockDao, productParam.getSkuStockList(), productId);
         // 添加商品参数,添加自定义商品规格
         relateAndInsertList(pmsProductAttributeValueMapper, productParam.getProductAttributeValueList(), productId);
         // 关联专题
@@ -98,7 +100,7 @@ public class PmsProductImpl extends ServiceImpl<PmsProductMapper, PmsProduct> im
         if (pmsProductQueryParam.getProductCategoryId() != null) {
             lambdaQueryWrapper.eq(PmsProduct::getProductCategoryId, pmsProductQueryParam.getProductCategoryId());
         }
-        return pmsProductMapper.selectPage(pmsProductPage, lambdaQueryWrapper);
+        return pmsProductDao.selectPage(pmsProductPage, lambdaQueryWrapper);
     }
 
     @Override
@@ -107,7 +109,7 @@ public class PmsProductImpl extends ServiceImpl<PmsProductMapper, PmsProduct> im
         lambdaQueryWrapper.in(PmsProduct::getId, ids);
         PmsProduct pmsProduct = new PmsProduct();
         pmsProduct.setPublishStatus(publishStatus);
-        int updated = pmsProductMapper.update(pmsProduct, lambdaQueryWrapper);
+        int updated = pmsProductDao.update(pmsProduct, lambdaQueryWrapper);
         return updated;
     }
 
@@ -117,7 +119,7 @@ public class PmsProductImpl extends ServiceImpl<PmsProductMapper, PmsProduct> im
         lambdaQueryWrapper.in(PmsProduct::getId, ids);
         PmsProduct pmsProduct = new PmsProduct();
         pmsProduct.setRecommandStatus(recommendStatus);
-        int updated = pmsProductMapper.update(pmsProduct, lambdaQueryWrapper);
+        int updated = pmsProductDao.update(pmsProduct, lambdaQueryWrapper);
         return updated;
     }
 
@@ -127,7 +129,7 @@ public class PmsProductImpl extends ServiceImpl<PmsProductMapper, PmsProduct> im
         lambdaQueryWrapper.in(PmsProduct::getId, ids);
         PmsProduct pmsProduct = new PmsProduct();
         pmsProduct.setNewStatus(newStatus);
-        int updated = pmsProductMapper.update(pmsProduct, lambdaQueryWrapper);
+        int updated = pmsProductDao.update(pmsProduct, lambdaQueryWrapper);
         return updated;
     }
 
@@ -137,13 +139,13 @@ public class PmsProductImpl extends ServiceImpl<PmsProductMapper, PmsProduct> im
         lambdaQueryWrapper.in(PmsProduct::getId, ids);
         PmsProduct pmsProduct = new PmsProduct();
         pmsProduct.setDeleteStatus(deleteStatus);
-        int updated = pmsProductMapper.update(pmsProduct, lambdaQueryWrapper);
+        int updated = pmsProductDao.update(pmsProduct, lambdaQueryWrapper);
         return updated;
     }
 
     @Override
     public PmsProductResult getUpdateInfo(Long id) {
-        return pmsProductMapper.getUpdateInfo(id);
+        return pmsProductDao.getUpdateInfo(id);
     }
 
     /**

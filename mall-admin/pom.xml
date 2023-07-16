@@ -21,19 +21,6 @@
     </properties>
 
     <dependencies>
-        <!--Mysql数据库驱动-->
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>druid-spring-boot-starter</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.github.xiaoymin</groupId>
-            <artifactId>knife4j-openapi2-spring-boot-starter</artifactId>
-        </dependency>
         <dependency>
             <groupId>com.minko.mall</groupId>
             <artifactId>mall-common</artifactId>
@@ -43,8 +30,8 @@
             <artifactId>mall-security</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-boot-starter</artifactId>
+            <groupId>com.minko.mall</groupId>
+            <artifactId>mall-mbp</artifactId>
         </dependency>
         <dependency>
             <groupId>io.minio</groupId>

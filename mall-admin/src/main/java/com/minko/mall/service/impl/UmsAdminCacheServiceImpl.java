@@ -2,11 +2,11 @@ package com.minko.mall.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.minko.mall.common.service.RedisService;
-import com.minko.mall.mapper.UmsAdminRoleRelationMapper;
 import com.minko.mall.model.UmsAdmin;
 import com.minko.mall.model.UmsAdminRoleRelation;
 import com.minko.mall.model.UmsResource;
+import com.minko.mall.common.service.RedisService;
+import com.minko.mall.dao.UmsAdminRoleRelationDao;
 import com.minko.mall.service.UmsAdminCacheService;
 import com.minko.mall.service.UmsAdminService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +37,7 @@ public class UmsAdminCacheServiceImpl implements UmsAdminCacheService {
     private UmsAdminService umsAdminService;
 
     @Autowired
-    private UmsAdminRoleRelationMapper umsAdminRoleRelationMapper;
+    private UmsAdminRoleRelationDao umsAdminRoleRelationDao;
 
     private String generateAdminKey(String username) {
         return REDIS_DATABASE + ":" + REDIS_KEY_ADMIN + ":" + username;
@@ -95,7 +95,7 @@ public class UmsAdminCacheServiceImpl implements UmsAdminCacheService {
     public void delResourceListByRole(Long roleId) {
         LambdaQueryWrapper<UmsAdminRoleRelation> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(UmsAdminRoleRelation::getRoleId, roleId);
-        List<UmsAdminRoleRelation> umsAdminRoleRelationList = umsAdminRoleRelationMapper.selectList(lambdaQueryWrapper);
+        List<UmsAdminRoleRelation> umsAdminRoleRelationList = umsAdminRoleRelationDao.selectList(lambdaQueryWrapper);
 
         delResourceList(umsAdminRoleRelationList);
     }
@@ -104,7 +104,7 @@ public class UmsAdminCacheServiceImpl implements UmsAdminCacheService {
     public void delResourceListByRoleIds(List<Long> roleIds) {
         LambdaQueryWrapper<UmsAdminRoleRelation> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.in(UmsAdminRoleRelation::getRoleId, roleIds);
-        List<UmsAdminRoleRelation> umsAdminRoleRelationList = umsAdminRoleRelationMapper.selectList(lambdaQueryWrapper);
+        List<UmsAdminRoleRelation> umsAdminRoleRelationList = umsAdminRoleRelationDao.selectList(lambdaQueryWrapper);
 
         delResourceList(umsAdminRoleRelationList);
     }
@@ -116,7 +116,7 @@ public class UmsAdminCacheServiceImpl implements UmsAdminCacheService {
 
     @Override
     public void delResourceListByResource(Long id) {
-        List<Long> adminIdList = umsAdminRoleRelationMapper.getAdminList(id);
+        List<Long> adminIdList = umsAdminRoleRelationDao.getAdminList(id);
         if (CollUtil.isNotEmpty(adminIdList)) {
             String keyPrefix = generateResourceKey();
             List<String> keys = adminIdList.stream().map(adminId -> keyPrefix + adminId).collect(Collectors.toList());

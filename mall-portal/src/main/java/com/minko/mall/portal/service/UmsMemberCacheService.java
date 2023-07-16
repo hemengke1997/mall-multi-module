@@ -1,6 +1,6 @@
 package com.minko.mall.portal.service;
 
-import com.minko.mall.portal.model.UmsMember;
+import com.minko.mall.model.UmsMember;
 
 /**
  * 会员信息缓存业务类

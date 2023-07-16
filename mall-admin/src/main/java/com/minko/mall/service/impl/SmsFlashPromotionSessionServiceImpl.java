@@ -2,9 +2,9 @@ package com.minko.mall.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.minko.mall.dto.SmsFlashPromotionSessionDetail;
-import com.minko.mall.mapper.SmsFlashPromotionSessionMapper;
 import com.minko.mall.model.SmsFlashPromotionSession;
+import com.minko.mall.dao.SmsFlashPromotionSessionDao;
+import com.minko.mall.dto.SmsFlashPromotionSessionDetail;
 import com.minko.mall.service.SmsFlashPromotionProductRelationService;
 import com.minko.mall.service.SmsFlashPromotionSessionService;
 import org.springframework.beans.BeanUtils;
@@ -15,9 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class SmsFlashPromotionSessionServiceImpl extends ServiceImpl<SmsFlashPromotionSessionMapper, SmsFlashPromotionSession> implements SmsFlashPromotionSessionService {
+public class SmsFlashPromotionSessionServiceImpl extends ServiceImpl<SmsFlashPromotionSessionDao, SmsFlashPromotionSession> implements SmsFlashPromotionSessionService {
     @Autowired
-    private SmsFlashPromotionSessionMapper flashPromotionSessionMapper;
+    private SmsFlashPromotionSessionDao flashPromotionSessionMapper;
 
     @Autowired
     private SmsFlashPromotionProductRelationService relationService;

@@ -16,6 +16,7 @@
         <module>mall-security</module>
         <module>mall-portal</module>
         <module>mall-search</module>
+        <module>mall-mbp</module>
     </modules>
 
     <parent>
@@ -51,6 +52,7 @@
         <mall-common.version>1.0</mall-common.version>
         <mall-security.version>1.0</mall-security.version>
         <mall-admin.version>1.0</mall-admin.version>
+        <mall-mbp.version>1.0</mall-mbp.version>
         <mybatis-plus.version>3.4.1</mybatis-plus.version>
     </properties>
 
@@ -104,6 +106,11 @@
                 <groupId>com.minko.mall</groupId>
                 <artifactId>mall-admin</artifactId>
                 <version>${mall-admin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.minko.mall</groupId>
+                <artifactId>mall-mbp</artifactId>
+                <version>${mall-mbp.version}</version>
             </dependency>
             <!--集成druid连接池-->
             <dependency>

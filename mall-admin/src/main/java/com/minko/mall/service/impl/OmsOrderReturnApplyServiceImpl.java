@@ -3,10 +3,10 @@ package com.minko.mall.service.impl;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.minko.mall.model.OmsOrderReturnApply;
+import com.minko.mall.dao.OmsOrderReturnApplyDao;
 import com.minko.mall.dto.OmsReturnApplyQueryParam;
 import com.minko.mall.dto.OmsUpdateStatusParam;
-import com.minko.mall.mapper.OmsOrderReturnApplyMapper;
-import com.minko.mall.model.OmsOrderReturnApply;
 import com.minko.mall.service.OmsOrderReturnApplyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,13 +14,13 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 
 @Service
-public class OmsOrderReturnApplyServiceImpl extends ServiceImpl<OmsOrderReturnApplyMapper, OmsOrderReturnApply> implements OmsOrderReturnApplyService {
+public class OmsOrderReturnApplyServiceImpl extends ServiceImpl<OmsOrderReturnApplyDao, OmsOrderReturnApply> implements OmsOrderReturnApplyService {
     @Autowired
-    private OmsOrderReturnApplyMapper omsOrderReturnApplyMapper;
+    private OmsOrderReturnApplyDao omsOrderReturnApplyDao;
 
     @Override
     public Page<OmsOrderReturnApply> selectPage(IPage<OmsOrderReturnApply> page, OmsReturnApplyQueryParam queryParam) {
-        return omsOrderReturnApplyMapper.getList(page, queryParam);
+        return omsOrderReturnApplyDao.getList(page, queryParam);
     }
 
     @Override
@@ -53,6 +53,6 @@ public class OmsOrderReturnApplyServiceImpl extends ServiceImpl<OmsOrderReturnAp
         } else {
             return 0;
         }
-        return omsOrderReturnApplyMapper.updateById(returnApply);
+        return omsOrderReturnApplyDao.updateById(returnApply);
     }
 }

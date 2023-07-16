@@ -5,8 +5,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.minko.mall.common.exception.Asserts;
-import com.minko.mall.mapper.UmsAdminRoleRelationMapper;
-import com.minko.mall.mapper.UmsRoleMapper;
+import com.minko.mall.dao.UmsAdminRoleRelationDao;
+import com.minko.mall.dao.UmsRoleDao;
 import com.minko.mall.mapper.UmsRoleResourceRelationMapper;
 import com.minko.mall.model.*;
 import com.minko.mall.service.UmsAdminCacheService;
@@ -17,12 +17,12 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class UmsRoleServiceImpl extends ServiceImpl<UmsRoleMapper, UmsRole> implements UmsRoleService {
+public class UmsRoleServiceImpl extends ServiceImpl<UmsRoleDao, UmsRole> implements UmsRoleService {
     @Autowired
-    private UmsRoleMapper umsRoleMapper;
+    private UmsRoleDao umsRoleDao;
 
     @Autowired
-    private UmsAdminRoleRelationMapper umsAdminRoleRelationMapper;
+    private UmsAdminRoleRelationDao umsAdminRoleRelationDao;
 
     @Autowired
     private UmsRoleResourceRelationMapper umsRoleResourceRelationMapper;
@@ -40,7 +40,7 @@ public class UmsRoleServiceImpl extends ServiceImpl<UmsRoleMapper, UmsRole> impl
 
     @Override
     public List<UmsMenu> getMenuList(Long adminId) {
-        List<UmsMenu> menuList = umsRoleMapper.getMenuList(adminId);
+        List<UmsMenu> menuList = umsRoleDao.getMenuList(adminId);
         return menuList;
     }
 
@@ -56,7 +56,7 @@ public class UmsRoleServiceImpl extends ServiceImpl<UmsRoleMapper, UmsRole> impl
 
     @Override
     public void refreshAdminCount() {
-        umsRoleMapper.refreshAdminCount();
+        umsRoleDao.refreshAdminCount();
     }
 
     @Override
@@ -65,7 +65,7 @@ public class UmsRoleServiceImpl extends ServiceImpl<UmsRoleMapper, UmsRole> impl
             // 查询当前角色id是否绑定了用户
             LambdaQueryWrapper<UmsAdminRoleRelation> adminRoleRelationLambdaQueryWrapper = new LambdaQueryWrapper<>();
             adminRoleRelationLambdaQueryWrapper.eq(UmsAdminRoleRelation::getRoleId, id);
-            int count1 = umsAdminRoleRelationMapper.selectCount(adminRoleRelationLambdaQueryWrapper);
+            int count1 = umsAdminRoleRelationDao.selectCount(adminRoleRelationLambdaQueryWrapper);
             if (count1 > 0) {
                 Asserts.fail("角色ID：" + id + "绑定了后台用户，无法删除");
             }
@@ -73,7 +73,7 @@ public class UmsRoleServiceImpl extends ServiceImpl<UmsRoleMapper, UmsRole> impl
             // 查询当前角色id是否绑定了菜单
             LambdaQueryWrapper<UmsRoleMenuRelation> roleMenuRelationLambdaQueryWrapper = new LambdaQueryWrapper<>();
             roleMenuRelationLambdaQueryWrapper.eq(UmsRoleMenuRelation::getRoleId, id);
-            int count2 = umsAdminRoleRelationMapper.selectCount(adminRoleRelationLambdaQueryWrapper);
+            int count2 = umsAdminRoleRelationDao.selectCount(adminRoleRelationLambdaQueryWrapper);
             if (count2 > 0) {
                 Asserts.fail("角色ID：" + id + "绑定了菜单，无法删除");
             }
@@ -81,7 +81,7 @@ public class UmsRoleServiceImpl extends ServiceImpl<UmsRoleMapper, UmsRole> impl
             // 删除
             UmsRole role = new UmsRole();
             role.setId(id);
-            umsRoleMapper.deleteById(role);
+            umsRoleDao.deleteById(role);
         });
         umsAdminCacheService.delResourceListByRoleIds(ids);
         return 1;
@@ -89,12 +89,12 @@ public class UmsRoleServiceImpl extends ServiceImpl<UmsRoleMapper, UmsRole> impl
 
     @Override
     public List<UmsMenu> listMenu(Long roleId) {
-        return umsRoleMapper.getMenuListByRoleId(roleId);
+        return umsRoleDao.getMenuListByRoleId(roleId);
     }
 
     @Override
     public List<UmsResource> listResource(Long roleId) {
-        return umsRoleMapper.getResourceListByRoleId(roleId);
+        return umsRoleDao.getResourceListByRoleId(roleId);
     }
 
     @Override
