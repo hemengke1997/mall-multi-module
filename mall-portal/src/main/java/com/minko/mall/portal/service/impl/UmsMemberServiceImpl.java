@@ -59,11 +59,11 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         // 若没有缓存，则读数据库
         LambdaQueryWrapper<UmsMember> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(UmsMember::getUsername, username);
-        UmsMember umsMember = memberMapper.selectOne(queryWrapper);
+        List<UmsMember> umsMemberList = memberMapper.selectList(queryWrapper);
         // 读数据库成功后，设置redis缓存
-        if (umsMember != null) {
-            memberCacheService.setMember(umsMember);
-            return umsMember;
+        if (CollectionUtil.isNotEmpty(umsMemberList)) {
+            memberCacheService.setMember(umsMemberList.get(0));
+            return umsMemberList.get(0);
         }
         return null;
     }
@@ -71,9 +71,9 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
     @Override
     public void register(String username, String password, String telephone, String authCode) {
         // 验证redis中验证码
-        // if (!verifyAuthCode(authCode, telephone)) {
-        //     Asserts.fail("验证码错误");
-        // }
+        if (!verifyAuthCode(authCode, telephone)) {
+            Asserts.fail("验证码错误");
+        }
         // 查询是否已有该用户
         LambdaQueryWrapper<UmsMember> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(UmsMember::getUsername, username);

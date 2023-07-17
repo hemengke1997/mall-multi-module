@@ -20,7 +20,7 @@ spring:
     mongodb:
       host: localhost
       port: 27017
-      database: mall-port
+      database: mall-portal
   rabbitmq:
     host: localhost
     port: 5672

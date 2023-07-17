@@ -18,7 +18,10 @@ mybatis-plus:
     map-underscore-to-camel-case: true
   global-config:
     db-config:
-      logic-delete-value: 1 #逻辑删除值
+      logic-delete-value: 1 #
+  mapper-locations:
+    - classpath:dao/*.xml
+    - classpath*:com/**/mapper/*.xml
 
 jwt: #jwt相关配置
   tokenHeader: Authorization #JWT 请求头(request header中的名称)

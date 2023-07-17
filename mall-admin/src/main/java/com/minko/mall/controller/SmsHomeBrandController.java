@@ -1,7 +1,7 @@
 package com.minko.mall.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.minko.mall.api.CPage;
+import com.minko.mall.common.api.CPage;
 import com.minko.mall.common.api.Result;
 import com.minko.mall.model.SmsHomeBrand;
 import com.minko.mall.service.SmsHomeBrandService;

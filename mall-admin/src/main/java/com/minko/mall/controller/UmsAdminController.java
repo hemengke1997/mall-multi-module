@@ -2,7 +2,7 @@ package com.minko.mall.controller;
 
 import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.minko.mall.api.CPage;
+import com.minko.mall.common.api.CPage;
 import com.minko.mall.common.api.Result;
 import com.minko.mall.dto.UmsAdminLoginParam;
 import com.minko.mall.dto.UmsAdminParam;
