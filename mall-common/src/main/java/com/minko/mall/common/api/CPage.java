@@ -8,11 +8,11 @@ import java.util.List;
 
 @Getter
 @Setter
-public class CPage<T, U> {
+public class CPage<T> {
     /**
      * page
      */
-    private U pageInfo;
+    private Object pageInfo;
     /**
      * 当前页码
      */
@@ -38,8 +38,8 @@ public class CPage<T, U> {
     /**
      * mybatis-plus 分页结果
      */
-    public static <T> CPage<T, Page<T>> restPage(Page<T> pageInfo) {
-        CPage<T, Page<T>> result = new CPage<>();
+    public static <T> CPage<T> restPage(Page<T> pageInfo) {
+        CPage<T> result = new CPage<>();
         result.setPageNum(pageInfo.getCurrent());
         result.setPageSize(pageInfo.getSize());
         result.setList(pageInfo.getRecords());
@@ -52,8 +52,8 @@ public class CPage<T, U> {
     /**
      * springData分页结果
      */
-    public static <T> CPage<T, org.springframework.data.domain.Page<T>> restPage(org.springframework.data.domain.Page<T> pageInfo) {
-        CPage<T, org.springframework.data.domain.Page<T>> result = new CPage<>();
+    public static <T> CPage<T> restPage(org.springframework.data.domain.Page<T> pageInfo) {
+        CPage<T> result = new CPage<>();
         result.setPageNum((long) pageInfo.getNumber());
         result.setPageSize((long) pageInfo.getSize());
         result.setList(pageInfo.getContent());
