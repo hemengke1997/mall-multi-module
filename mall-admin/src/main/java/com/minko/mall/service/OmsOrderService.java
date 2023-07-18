@@ -2,6 +2,7 @@ package com.minko.mall.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.minko.mall.dto.OmsOrderDeliveryParam;
 import com.minko.mall.dto.OmsOrderDetail;
 import com.minko.mall.dto.OmsOrderQueryParam;
 import com.minko.mall.dto.OmsReceiverInfoParam;
@@ -25,4 +26,10 @@ public interface OmsOrderService extends IService<OmsOrder> {
      */
     @Transactional
     int updateReceiverInfo(OmsReceiverInfoParam receiverInfoParam);
+
+    /**
+     * 批量发货
+     */
+    @Transactional
+    int delivery(List<OmsOrderDeliveryParam> deliveryParamList);
 }

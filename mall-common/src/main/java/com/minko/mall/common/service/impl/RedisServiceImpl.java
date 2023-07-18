@@ -53,4 +53,9 @@ public class RedisServiceImpl implements RedisService {
     public Boolean expire(String key, long time) {
         return redisTemplate.expire(key, time, TimeUnit.SECONDS);
     }
+
+    @Override
+    public Long incr(String key, long delta) {
+        return redisTemplate.opsForValue().increment(key, delta);
+    }
 }

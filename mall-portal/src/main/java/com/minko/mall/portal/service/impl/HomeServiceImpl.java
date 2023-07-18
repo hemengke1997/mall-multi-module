@@ -10,13 +10,18 @@ import com.minko.mall.portal.domain.FlashPromotionProduct;
 import com.minko.mall.portal.domain.HomeContentResult;
 import com.minko.mall.portal.domain.HomeFlashPromotion;
 import com.minko.mall.portal.service.HomeService;
-import com.minko.mall.portal.util.DateUtil;
+import com.minko.mall.portal.util.MDateUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+@Slf4j
 @Service
 public class HomeServiceImpl implements HomeService {
     @Autowired
@@ -97,8 +102,17 @@ public class HomeServiceImpl implements HomeService {
             // 获取当前秒杀场次
             SmsFlashPromotionSession flashPromotionSession = getFlashPromotionSession(now);
             if (flashPromotionSession != null) {
-                homeFlashPromotion.setStartTime(flashPromotionSession.getStartTime());
-                homeFlashPromotion.setEndTime(flashPromotionSession.getEndTime());
+                Calendar t = Calendar.getInstance();
+                Calendar start = Calendar.getInstance();
+                start.setTime(flashPromotionSession.getStartTime());
+                Calendar end = Calendar.getInstance();
+                end.setTime(flashPromotionSession.getEndTime());
+
+                start.set(t.get(Calendar.YEAR), t.get(Calendar.MONTH), t.get(Calendar.DATE));
+                end.set(t.get(Calendar.YEAR), t.get(Calendar.MONTH), t.get(Calendar.DATE));
+
+                homeFlashPromotion.setStartTime(start.getTime());
+                homeFlashPromotion.setEndTime(end.getTime());
                 // 获取下一个秒杀场次
                 SmsFlashPromotionSession nextSession = getNextFlashPromotionSession(homeFlashPromotion.getStartTime());
                 if (nextSession != null) {
@@ -129,12 +143,15 @@ public class HomeServiceImpl implements HomeService {
      * 根据时间获取秒杀场次
      */
     private SmsFlashPromotionSession getFlashPromotionSession(Date date) {
-        Date currDate = DateUtil.getDate(date);
+        Date currTime = MDateUtil.getTime(date);
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+        String s = format.format(currTime);
         LambdaQueryWrapper<SmsFlashPromotionSession> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.ge(SmsFlashPromotionSession::getStartTime, currDate).le(SmsFlashPromotionSession::getEndTime, currDate);
-        List<SmsFlashPromotionSession> list = promotionSessionMapper.selectList(queryWrapper);
-        if (CollectionUtil.isNotEmpty(list)) {
-            return list.get(0);
+        queryWrapper.le(SmsFlashPromotionSession::getStartTime, s)
+                .ge(SmsFlashPromotionSession::getEndTime, s);
+        List<SmsFlashPromotionSession> promotionSessionList = promotionSessionMapper.selectList(queryWrapper);
+        if (!CollectionUtils.isEmpty(promotionSessionList)) {
+            return promotionSessionList.get(0);
         }
         return null;
     }
@@ -143,9 +160,12 @@ public class HomeServiceImpl implements HomeService {
      * 根据时间获取秒杀信息
      */
     private SmsFlashPromotion getFlashPromotion(Date date) {
-        Date currDate = DateUtil.getDate(date);
+        Date currDate = MDateUtil.getDate(date);
         LambdaQueryWrapper<SmsFlashPromotion> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.ge(SmsFlashPromotion::getStartDate, currDate).le(SmsFlashPromotion::getEndDate, currDate);
+        queryWrapper
+                .lt(SmsFlashPromotion::getStartDate, currDate)
+                .gt(SmsFlashPromotion::getEndDate, currDate)
+                .eq(SmsFlashPromotion::getStatus, 1);
         List<SmsFlashPromotion> flashPromotionList = flashPromotionMapper.selectList(queryWrapper);
         if (CollectionUtil.isNotEmpty(flashPromotionList)) {
             return flashPromotionList.get(0);

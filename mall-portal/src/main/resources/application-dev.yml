@@ -27,6 +27,9 @@ spring:
     virtual-host: /mall
     username: admin
     password: admin
+    listener:
+      direct:
+        acknowledge-mode: manual
 
 logging:
   level:

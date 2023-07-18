@@ -8,7 +8,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class CPage<T> {
+public class CPage<E> {
     /**
      * page
      */
@@ -28,7 +28,7 @@ public class CPage<T> {
     /**
      * 分页数据
      */
-    private List<T> list;
+    private List<E> list;
 
     /**
      * 总条数
@@ -38,8 +38,8 @@ public class CPage<T> {
     /**
      * mybatis-plus 分页结果
      */
-    public static <T> CPage<T> restPage(Page<T> pageInfo) {
-        CPage<T> result = new CPage<>();
+    public static <E> CPage<E> restPage(Page<E> pageInfo) {
+        CPage<E> result = new CPage<>();
         result.setPageNum(pageInfo.getCurrent());
         result.setPageSize(pageInfo.getSize());
         result.setList(pageInfo.getRecords());
@@ -52,8 +52,8 @@ public class CPage<T> {
     /**
      * springData分页结果
      */
-    public static <T> CPage<T> restPage(org.springframework.data.domain.Page<T> pageInfo) {
-        CPage<T> result = new CPage<>();
+    public static <E> CPage<E> restPage(org.springframework.data.domain.Page<E> pageInfo) {
+        CPage<E> result = new CPage<>();
         result.setPageNum((long) pageInfo.getNumber());
         result.setPageSize((long) pageInfo.getSize());
         result.setList(pageInfo.getContent());

@@ -167,6 +167,15 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         return refreshToken;
     }
 
+    @Override
+    public void updateIntegration(Long id, Integer integration) {
+        UmsMember record = new UmsMember();
+        record.setId(id);
+        record.setIntegration(integration);
+        memberMapper.updateById(record);
+        memberCacheService.delMember(id);
+    }
+
     private boolean verifyAuthCode(String authCode, String telephone) {
         if (StrUtil.isEmpty(authCode)) {
             return false;

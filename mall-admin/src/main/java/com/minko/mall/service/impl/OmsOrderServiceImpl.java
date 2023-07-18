@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.minko.mall.bo.UmsAdminUserDetails;
 import com.minko.mall.dao.OmsOrderDao;
+import com.minko.mall.dao.OmsOrderOperateHistoryDao;
+import com.minko.mall.dto.OmsOrderDeliveryParam;
 import com.minko.mall.dto.OmsOrderDetail;
 import com.minko.mall.dto.OmsOrderQueryParam;
 import com.minko.mall.dto.OmsReceiverInfoParam;
@@ -20,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderDao, OmsOrder> implements OmsOrderService {
@@ -29,6 +32,8 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderDao, OmsOrder> impl
     private OmsOrderOperateHistoryMapper omsOrderOperateHistoryMapper;
     @Autowired
     private UmsAdminService umsAdminService;
+    @Autowired
+    private OmsOrderOperateHistoryDao orderOperateHistoryDao;
 
     @Override
     public Page<OmsOrder> selectPage(Page<OmsOrder> orderPage, OmsOrderQueryParam omsOrderQueryParam) {
@@ -110,6 +115,25 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderDao, OmsOrder> impl
         history.setOrderStatus(receiverInfoParam.getStatus());
         history.setNote("修改收货人信息");
         omsOrderOperateHistoryMapper.insert(history);
+        return count;
+    }
+
+    @Override
+    public int delivery(List<OmsOrderDeliveryParam> deliveryParamList) {
+        //批量发货
+        int count = orderDao.delivery(deliveryParamList);
+        //添加操作记录
+        List<OmsOrderOperateHistory> operateHistoryList = deliveryParamList.stream()
+                .map(omsOrderDeliveryParam -> {
+                    OmsOrderOperateHistory history = new OmsOrderOperateHistory();
+                    history.setOrderId(omsOrderDeliveryParam.getOrderId());
+                    history.setCreateTime(new Date());
+                    history.setOperateMan("后台管理员");
+                    history.setOrderStatus(2);
+                    history.setNote("完成发货");
+                    return history;
+                }).collect(Collectors.toList());
+        orderOperateHistoryDao.insertList(operateHistoryList);
         return count;
     }
 }

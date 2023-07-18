@@ -72,7 +72,7 @@ services:
       - "27017:27017" #mongo服务端口
 
   rabbitmq:
-    image: rabbitmq:3.9-management
+    image: rabbitmq:3.9.29-management
     container_name: rabbitmq-mall
     environment:
       - "RABBITMQ_DEFAULT_USER=admin" #设置rabbitmq的默认帐号
@@ -87,7 +87,6 @@ services:
       - ~/Documents/docker_volume/mall/rabbitmq/config:/etc/rabbitmq #配置文件目录挂载
     command: rabbitmq-server start
     restart: always
-    hostname: rabbitmqhost
 
   nginx:
     image: nginx

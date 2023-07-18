@@ -1,12 +1,16 @@
 package com.minko.mall.portal.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.minko.mall.mapper.*;
 import com.minko.mall.model.*;
 import com.minko.mall.portal.dao.PortalProductDao;
 import com.minko.mall.portal.domain.PmsPortalProductDetail;
+import com.minko.mall.portal.domain.PmsProductCategoryNode;
 import com.minko.mall.portal.service.PmsPortalProductService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +35,8 @@ public class PmsPortalProductServiceImpl implements PmsPortalProductService {
     private PmsProductFullReductionMapper productFullReductionMapper;
     @Autowired
     private PortalProductDao portalProductDao;
+    @Autowired
+    private PmsProductCategoryMapper productCategoryMapper;
 
     @Override
     public PmsPortalProductDetail detail(Long id) {
@@ -42,7 +48,7 @@ public class PmsPortalProductServiceImpl implements PmsPortalProductService {
         result.setBrand(brandMapper.selectById(product.getBrandId()));
         // 获取商品属性信息
         LambdaQueryWrapper<PmsProductAttribute> productAttributeLambdaQueryWrapper = new LambdaQueryWrapper<>();
-        productAttributeLambdaQueryWrapper.eq(PmsProductAttribute::getProductAttributeCategoryId, product.getProductCategoryId());
+        productAttributeLambdaQueryWrapper.eq(PmsProductAttribute::getProductAttributeCategoryId, product.getProductAttributeCategoryId());
         List<PmsProductAttribute> productAttributeList = productAttributeMapper.selectList(productAttributeLambdaQueryWrapper);
         result.setProductAttributeList(productAttributeList);
         //获取商品属性值信息
@@ -76,5 +82,56 @@ public class PmsPortalProductServiceImpl implements PmsPortalProductService {
         //商品可用优惠券
         result.setCouponList(portalProductDao.getAvailableCouponList(product.getId(), product.getProductCategoryId()));
         return result;
+    }
+
+    @Override
+    public Page<PmsProduct> search(String keyword, Long brandId, Long productCategoryId, Integer pageNum, Integer pageSize, Integer sort) {
+        Page<PmsProduct> page = new Page<>(pageNum, pageSize);
+        LambdaQueryWrapper<PmsProduct> productLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        productLambdaQueryWrapper.eq(PmsProduct::getDeleteStatus, 0)
+                .eq(PmsProduct::getPublishStatus, 1);
+        if (StrUtil.isNotEmpty(keyword)) {
+            productLambdaQueryWrapper.like(PmsProduct::getName, keyword);
+        }
+        if (brandId != null) {
+            productLambdaQueryWrapper.eq(PmsProduct::getBrandId, brandId);
+        }
+        if (productCategoryId != null) {
+            productLambdaQueryWrapper.eq(PmsProduct::getProductCategoryId, productCategoryId);
+        }
+        //1->按新品；2->按销量；3->价格从低到高；4->价格从高到低
+        if (sort == 1) {
+            productLambdaQueryWrapper.orderByDesc(PmsProduct::getId);
+        } else if (sort == 2) {
+            productLambdaQueryWrapper.orderByDesc(PmsProduct::getSale);
+        } else if (sort == 3) {
+            productLambdaQueryWrapper.orderByAsc(PmsProduct::getPrice);
+        } else if (sort == 4) {
+            productLambdaQueryWrapper.orderByDesc(PmsProduct::getPrice);
+        }
+        return productMapper.selectPage(page, productLambdaQueryWrapper);
+    }
+
+    @Override
+    public List<PmsProductCategoryNode> categoryTreeList() {
+        List<PmsProductCategory> productCategoryList = productCategoryMapper.selectList(null);
+        List<PmsProductCategoryNode> result = productCategoryList.stream()
+                .filter(item -> item.getParentId().equals(0L))
+                .map(item -> convert(item, productCategoryList))
+                .collect(Collectors.toList());
+        return result;
+    }
+
+    /**
+     * 初始对象转化为节点对象
+     */
+    private PmsProductCategoryNode convert(PmsProductCategory item, List<PmsProductCategory> allList) {
+        PmsProductCategoryNode node = new PmsProductCategoryNode();
+        BeanUtils.copyProperties(item, node);
+        List<PmsProductCategoryNode> children = allList.stream()
+                .filter(subItem -> subItem.getParentId().equals(item.getId()))
+                .map(subItem -> convert(subItem, allList)).collect(Collectors.toList());
+        node.setChildren(children);
+        return node;
     }
 }

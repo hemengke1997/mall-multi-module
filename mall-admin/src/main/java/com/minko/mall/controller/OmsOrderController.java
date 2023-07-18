@@ -3,6 +3,7 @@ package com.minko.mall.controller;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.minko.mall.common.api.CPage;
 import com.minko.mall.common.api.Result;
+import com.minko.mall.dto.OmsOrderDeliveryParam;
 import com.minko.mall.dto.OmsOrderDetail;
 import com.minko.mall.dto.OmsOrderQueryParam;
 import com.minko.mall.dto.OmsReceiverInfoParam;
@@ -65,6 +66,17 @@ public class OmsOrderController {
     @PostMapping("/update/receiverInfo")
     public Result updateReceiverInfo(@RequestBody OmsReceiverInfoParam receiverInfoParam) {
         int count = omsOrderService.updateReceiverInfo(receiverInfoParam);
+        if (count > 0) {
+            return Result.success(count);
+        }
+        return Result.failed();
+    }
+
+    @ApiOperation("批量发货")
+    @RequestMapping(value = "/update/delivery", method = RequestMethod.POST)
+    @ResponseBody
+    public Result delivery(@RequestBody List<OmsOrderDeliveryParam> deliveryParamList) {
+        int count = omsOrderService.delivery(deliveryParamList);
         if (count > 0) {
             return Result.success(count);
         }

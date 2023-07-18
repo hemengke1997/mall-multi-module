@@ -16,4 +16,9 @@ public interface RedisService {
     void delAll();
 
     Boolean expire(String key, long time);
+
+    /**
+     * 按delta递增
+     */
+    Long incr(String key, long delta);
 }
