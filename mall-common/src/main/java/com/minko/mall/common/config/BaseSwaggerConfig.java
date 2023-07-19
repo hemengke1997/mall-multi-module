@@ -25,16 +25,19 @@ public abstract class BaseSwaggerConfig {
         SwaggerProperties swaggerProperties = this.swaggerProperties();
         SwaggerGlobalPars swaggerGlobalPars = this.swaggerGlobalPars();
         List<Parameter> pars = new ArrayList<>();
-        ParameterBuilder tokenPar = new ParameterBuilder();
-        tokenPar.name(swaggerGlobalPars.getName())
-                .description(swaggerGlobalPars.getDescription())
-                .defaultValue(swaggerGlobalPars.getDefaultValue())
-                .modelRef(swaggerGlobalPars.getModelRef())
-                .parameterType(swaggerGlobalPars.getParamType())
-                .required(swaggerGlobalPars.isRequired())
-                .build();
+        if (swaggerGlobalPars != null) {
+            ParameterBuilder tokenPar = new ParameterBuilder();
+            tokenPar.name(swaggerGlobalPars.getName())
+                    .description(swaggerGlobalPars.getDescription())
+                    .defaultValue(swaggerGlobalPars.getDefaultValue())
+                    .modelRef(swaggerGlobalPars.getModelRef())
+                    .parameterType(swaggerGlobalPars.getParamType())
+                    .required(swaggerGlobalPars.isRequired())
+                    .build();
 
-        pars.add(tokenPar.build());
+            pars.add(tokenPar.build());
+        }
+
 
         Docket docket = new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo(swaggerProperties))
